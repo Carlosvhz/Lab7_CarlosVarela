@@ -16,8 +16,12 @@ class lavaplatos:public personal{
             //Username, password, nombre, ID, Edad, Numero de telefono, año_contratacion
     virtual~lavaplatos();
     //Getters
+    bool Renunciar();
+    bool Aumento();
+
     int getMotivacion();
     void setMotivacion(int);
+
     void desmotivar(int);
     void motivar(int);
 

@@ -8,6 +8,8 @@
 #include "mesero.h"
 #include <typeinfo>
 #include <vector>
+#include <fstream>
+
 using namespace std;
 
 /* = Prototipos= */
@@ -29,7 +31,7 @@ void guardarUsuario(usuario*);   //##PENDIENTE
 
   //Funciones de funcionesUsuario
 /*De administrador*/
-usuario* contratarEmpleado();
+usuario* contratarEmpleado(vector<usuario*>*);
 usuario* empleadoMenorSueldo(vector<usuario*>*);
 usuario* empleadoMayorSueldo(vector<usuario*>*);
 void asignarPlatillo(string,string,vector<usuario*>*);
@@ -38,6 +40,9 @@ int promedioTotal(vector<usuario*>*);
 /*De chef*/
 void gritar(usuario*,vector<usuario*>*);
 void agradar(usuario*,vector<usuario*>*);
+//_______________________________________________________________
+
+
 
 int main(){
   for(int i=0;i<3;i++)cout<<endl;
@@ -151,6 +156,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
   if(user!=NULL){
     cout<<" =| Funciones extras |= "<<endl;
     int opcion;
+    /*_=================================================_*/
     if(dynamic_cast<administrador*>(user)){
       cout<<"1. Contratar empleado"<<endl
           <<"2. Despedir empleado"<<endl
@@ -163,7 +169,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
       for(int i=0;i<2;i++){cout<<endl;};
       switch(opcion){
         case 1:{ //Contratar Empleado
-          usuario* n = contratarEmpleado();
+          usuario* n = contratarEmpleado(usuarios);
           usuarios->push_back(n);
           guardarUsuario(n);
         }
@@ -238,6 +244,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
         default:
           cout<<" ¡¡¡ No existe numero de metodo ingresado !!! "<<endl;
       }
+    /*_=================================================_*/
     }else if(dynamic_cast<chef*>(user)){ //CHEF
       cout<<"1. Gritarle a un lavaplatos"<<endl
           <<"2. Agradar a un lavaplatos"<<endl
@@ -254,6 +261,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
         }
         break;
       }
+    /*_=================================================_*/
     }else if(dynamic_cast<lavaplatos*>(user)){ //LAVAPLATOS
       cout<<"1. Renunciar"<<endl
           <<"2. Pedir aumento"<<endl
@@ -262,14 +270,32 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
       for(int i=0;i<2;i++){cout<<endl;};
       switch(opcion){
         case 1:{
-
+          lavaplatos* lava = dynamic_cast<lavaplatos*>(user);
+          if(lava->Renunciar()){
+            cout<<"¡¡¡ Lavaplatos despedido !!!"<<endl;
+          }else{
+            cout<<"¡¡¡ Este usuario no puede ser despedido !!! "<<endl;
+          }
         }
         break;
         case 2:{
-
+          lavaplatos* lava = dynamic_cast<lavaplatos*>(user);
+          if(lava->Aumento()){
+            int cantidad;
+            cout<<"Ingrese la cantidad de aumento: ";
+            cin>>cantidad;
+            while(cantidad>=lava->getSueldo()){
+              cout<<"NO puede poner tal aumento!... Ingrese otra cantidad: ";
+              cin>>cantidad;
+            }
+            cout<<"¡¡¡ Aumento realiazdo !!!"<<endl;
+          }else{
+            cout<<"¡¡¡ Este usuario no puede tener un aumento !!! "<<endl;
+          }
         }
         break;
       }
+    /*_=================================================_*/
     }else if(dynamic_cast<mesero*>(user)){ //MESERO
       mesero* meseron;
       cout<<"1. Entregar platillo"<<endl
@@ -293,7 +319,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
               cout<<"¡¡¡Numero no valido !!! Ingrese un numero correcto: ";
               cin>>numero;
             }
-            meseron->getPlatillos().erase(meseron->getPlatillos().begin()+numero);
+            meseron->eliminarPlatillo(numero);
             cout<<"¡¡¡ Platillo repartido!!! "<<endl;
           }else{
             cout<<" ¡¡¡ Este mesero no tiene platillos a entregar !!!";
@@ -304,17 +330,16 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
           cout<<" =| Entregar Platillos |="<<endl;
           meseron = dynamic_cast<mesero*>(user);
           if(meseron->getPlatillos().size()!=0){
-            for(int i=0; i<meseron->getPlatillos().size(); i++){
-              meseron->getPlatillos().erase(meseron->getPlatillos().begin()+i);
-            }
+            meseron->eliminarPlatillos();
             cout<<"¡¡¡ Platillos repartidos!!! "<<endl;
           }else{
-            cout<<" ¡¡¡ Este mesero no tiene platillos a entregar !!!";
+            cout<<" ¡¡¡ Este mesero no tiene platillos a entregar !!!"<<endl;
           }
         }
         break;
       }
     }
+  /*_=================================================_*/
   }else if(user==NULL){
     cout<<" ¡¡No hay usuario logeado!! "<<endl;
   }
@@ -323,7 +348,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
 
 //Funciones de funcionesUsuario
   /*Administrador*/
-usuario* contratarEmpleado(){
+usuario* contratarEmpleado(vector<usuario*> *usuarios){
   usuario* user;
   int opcion;
   string username, nombre, password, ID;
@@ -348,6 +373,10 @@ usuario* contratarEmpleado(){
   cin>>password;
   cout<<"- Ingrese ID: ";
   cin>>ID;
+  while(comprobarID(ID,usuarios)){
+    cout<<"- ID ya registrado, Ingrese otro ID: ";
+    cin>>ID;
+  }
   cout<<"- Ingrese numero de Telefono(entero): ";
   cin>>numTelefono;
   switch(opcion){
@@ -381,6 +410,7 @@ usuario* contratarEmpleado(){
       cin>>sueldo;
       user = new lavaplatos(username,password,nombre,ID,edad,numTelefono,anio,sueldo);
     }
+    break;
 
     case 4:{
       cout<<"- Ingrese año de contratacion: ";
@@ -389,6 +419,8 @@ usuario* contratarEmpleado(){
       cin>>sueldo;
       user = new mesero(username,password,nombre,ID,edad,numTelefono,anio,sueldo);
     }
+    break;
+
   }
   cout<<"¡¡Usuario registrado!!"<<endl;
   return user;
@@ -515,16 +547,12 @@ void agradar(usuario* user, vector<usuario*> *usuarios){
     cout<<"¡¡¡ No hay lavaplatos para regañarlo !!! "<<endl;
   }
 }
-  /*Lavaplatos*/
 
 
-  /*Mesero*/
-
-
-
-//Funciones con archivos
+//Otras funciones
       /*Guarda el usuario en los archivos de texto*/
 void guardarUsuario(usuario* user){
+  ofstream fichero("datos.dat",ios::out);
 
 }
 

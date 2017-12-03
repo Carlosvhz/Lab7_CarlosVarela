@@ -31,3 +31,17 @@ void lavaplatos::desmotivar(int numero){
 void lavaplatos::motivar(int numero){
   motivacion+=numero;
 }
+
+bool lavaplatos::Renunciar(){
+  if(motivacion<=25){
+    return true;
+  }
+  return false;
+}
+
+bool lavaplatos::Aumento(){
+  if(motivacion>=100){
+    return true;
+  }
+  return false;
+}
