@@ -88,7 +88,7 @@ int main(){
         cout<<"Bai :v"<<endl;
         break;
     }
-  }while(opcion>0&&opcion<5);
+  }while(opcion>0&&opcion<6);
 }
 
 //Funciones del menu
