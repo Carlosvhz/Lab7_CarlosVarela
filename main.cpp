@@ -552,31 +552,32 @@ void agradar(usuario* user, vector<usuario*> *usuarios){
 //Otras funciones
       /*Guarda el usuario en los archivos de texto*/
 void guardarUsuario(usuario* user){
-  ofstream fichero("datos.txt",ios::out);
+  fstream fichero;
+  fichero.open("datos.txt",std::fstream::in|std::fstream::out|std::fstream::app);
   if(dynamic_cast<cliente*>(user)){           //Cliente
     cliente* cl = dynamic_cast<cliente*>(user);
-    fichero<<cl->getNombre()<<","<<cl->getUsername()<<","<<cl->getPassword()<<","<<cl->getID()
-          <<","<<cl->getEdad()<<","<<cl->getNumeroTelefono()<<","<<cl->getDireccion()<<","<<cl->getRating()<<"C";
+    fichero<<"cliente:"<<cl->getNombre()<<","<<cl->getUsername()<<","<<cl->getPassword()<<","<<cl->getID()
+          <<","<<cl->getEdad()<<","<<cl->getNumeroTelefono()<<","<<cl->getDireccion()<<","<<cl->getRating()<<'\n';
   }else if(dynamic_cast<personal*>(user)){           //personal
     personal* ps = dynamic_cast<personal*>(user);
-    fichero<<ps->getNombre()<<","<<ps->getUsername()<<","<<ps->getPassword()<<","<<ps->getID()
-          <<","<<ps->getEdad()<<","<<ps->getNumeroTelefono()<<","<<ps->getContratacion()<<","<<ps->getSueldo()<<"P";
+    fichero<<"personal:"<<ps->getNombre()<<","<<ps->getUsername()<<","<<ps->getPassword()<<","<<ps->getID()
+          <<","<<ps->getEdad()<<","<<ps->getNumeroTelefono()<<","<<ps->getContratacion()<<","<<ps->getSueldo()<<'\n';
   }else if(dynamic_cast<administrador*>(user)){           //administrador
     administrador* adm = dynamic_cast<administrador*>(user);
-    fichero<<adm->getNombre()<<","<<adm->getUsername()<<","<<adm->getPassword()<<","<<adm->getID()
-          <<","<<adm->getEdad()<<","<<adm->getNumeroTelefono()<<","<<adm->getEmpleadosContratados()<<","<<adm->getEmpleadosDespedidos()<<"A";
+    fichero<<"administrador:"<<adm->getNombre()<<","<<adm->getUsername()<<","<<adm->getPassword()<<","<<adm->getID()
+          <<","<<adm->getEdad()<<","<<adm->getNumeroTelefono()<<","<<adm->getEmpleadosContratados()<<","<<adm->getEmpleadosDespedidos()<<'\n';
   }else if(dynamic_cast<chef*>(user)){           //chef
     chef* ch = dynamic_cast<chef*>(user);
-    fichero<<ch->getNombre()<<","<<ch->getUsername()<<","<<ch->getPassword()<<","<<ch->getID()
-          <<","<<ch->getEdad()<<","<<ch->getNumeroTelefono()<<","<<ch->getPlatillo()<<"H";
+    fichero<<"chef:"<<ch->getNombre()<<","<<ch->getUsername()<<","<<ch->getPassword()<<","<<ch->getID()
+          <<","<<ch->getEdad()<<","<<ch->getNumeroTelefono()<<","<<ch->getPlatillo()<<'\n';
   }else if(dynamic_cast<lavaplatos*>(user)){           //Llavaplatos
     lavaplatos* lv = dynamic_cast<lavaplatos*>(user);
-    fichero<<lv->getNombre()<<","<<lv->getUsername()<<","<<lv->getPassword()<<","<<lv->getID()
-          <<","<<lv->getEdad()<<","<<lv->getNumeroTelefono()<<","<<lv->getMotivacion()<<"L";
+    fichero<<"lavaplatos:"<<lv->getNombre()<<","<<lv->getUsername()<<","<<lv->getPassword()<<","<<lv->getID()
+          <<","<<lv->getEdad()<<","<<lv->getNumeroTelefono()<<","<<lv->getMotivacion()<<'\n';
   }else if(dynamic_cast<mesero*>(user)){           //mesero
     mesero* ms = dynamic_cast<mesero*>(user);
-    fichero<<ms->getNombre()<<","<<ms->getUsername()<<","<<ms->getPassword()<<","<<ms->getID()
-          <<","<<ms->getEdad()<<","<<ms->getNumeroTelefono()<<"M";
+    fichero<<"mesero:"<<ms->getNombre()<<","<<ms->getUsername()<<","<<ms->getPassword()<<","<<ms->getID()
+          <<","<<ms->getEdad()<<","<<ms->getNumeroTelefono()<<'\n';
   }
   fichero.close();
 }
