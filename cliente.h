@@ -16,7 +16,7 @@ class cliente:public usuario{
     //Constructor y desctructor
     cliente();
     cliente(string,string,string,string,int,int,string,int);//Username, password, nombre, ID, Edad, Numero de telefono,direccion,rating
-    ~cliente();
+    virtual~cliente();
     //Getters
     string getDireccion();
     int getRating();

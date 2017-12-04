@@ -420,7 +420,7 @@ usuario* contratarEmpleado(vector<usuario*> *usuarios){
       user = new mesero(username,password,nombre,ID,edad,numTelefono,anio,sueldo);
     }
     break;
-
+    guardarUsuario(user);
   }
   cout<<"¡¡Usuario registrado!!"<<endl;
   return user;
@@ -552,8 +552,33 @@ void agradar(usuario* user, vector<usuario*> *usuarios){
 //Otras funciones
       /*Guarda el usuario en los archivos de texto*/
 void guardarUsuario(usuario* user){
-  ofstream fichero("datos.dat",ios::out);
-
+  ofstream fichero("datos.txt",ios::out);
+  if(dynamic_cast<cliente*>(user)){           //Cliente
+    cliente* cl = dynamic_cast<cliente*>(user);
+    fichero<<cl->getNombre()<<","<<cl->getUsername()<<","<<cl->getPassword()<<","<<cl->getID()
+          <<","<<cl->getEdad()<<","<<cl->getNumeroTelefono()<<","<<cl->getDireccion()<<","<<cl->getRating()<<"C";
+  }else if(dynamic_cast<personal*>(user)){           //personal
+    personal* ps = dynamic_cast<personal*>(user);
+    fichero<<ps->getNombre()<<","<<ps->getUsername()<<","<<ps->getPassword()<<","<<ps->getID()
+          <<","<<ps->getEdad()<<","<<ps->getNumeroTelefono()<<","<<ps->getContratacion()<<","<<ps->getSueldo()<<"P";
+  }else if(dynamic_cast<administrador*>(user)){           //administrador
+    administrador* adm = dynamic_cast<administrador*>(user);
+    fichero<<adm->getNombre()<<","<<adm->getUsername()<<","<<adm->getPassword()<<","<<adm->getID()
+          <<","<<adm->getEdad()<<","<<adm->getNumeroTelefono()<<","<<adm->getEmpleadosContratados()<<","<<adm->getEmpleadosDespedidos()<<"A";
+  }else if(dynamic_cast<chef*>(user)){           //chef
+    chef* ch = dynamic_cast<chef*>(user);
+    fichero<<ch->getNombre()<<","<<ch->getUsername()<<","<<ch->getPassword()<<","<<ch->getID()
+          <<","<<ch->getEdad()<<","<<ch->getNumeroTelefono()<<","<<ch->getPlatillo()<<"H";
+  }else if(dynamic_cast<lavaplatos*>(user)){           //Llavaplatos
+    lavaplatos* lv = dynamic_cast<lavaplatos*>(user);
+    fichero<<lv->getNombre()<<","<<lv->getUsername()<<","<<lv->getPassword()<<","<<lv->getID()
+          <<","<<lv->getEdad()<<","<<lv->getNumeroTelefono()<<","<<lv->getMotivacion()<<"L";
+  }else if(dynamic_cast<mesero*>(user)){           //mesero
+    mesero* ms = dynamic_cast<mesero*>(user);
+    fichero<<ms->getNombre()<<","<<ms->getUsername()<<","<<ms->getPassword()<<","<<ms->getID()
+          <<","<<ms->getEdad()<<","<<ms->getNumeroTelefono()<<"M";
+  }
+  fichero.close();
 }
 
       /*Comprueba si el ID no se repite*/
