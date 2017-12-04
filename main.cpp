@@ -26,14 +26,15 @@ void funcionesUsuario(usuario*,vector<usuario*>*); //#PENDIENTE
   //Funciones de registrarAdministradores
 usuario* comprobarUsuario(string,string,vector<usuario*>*);
 usuario* comprobarUsuario(string,vector<usuario*>*);
-  //Funciones de todos
+  //Otras funciones
 void guardarUsuario(usuario*);   //##PENDIENTE
+int estrellas(vector<usuario*>*);
 
   //Funciones de funcionesUsuario
 /*De administrador*/
 usuario* contratarEmpleado(vector<usuario*>*);
-usuario* empleadoMenorSueldo(vector<usuario*>*);
-usuario* empleadoMayorSueldo(vector<usuario*>*);
+vector<personal*> empleadoMenorSueldo(vector<usuario*>*);
+vector<personal*> empleadoMayorSueldo(vector<usuario*>*);
 void asignarPlatillo(string,string,vector<usuario*>*);
 int promedioTotal(vector<usuario*>*);
 
@@ -56,8 +57,9 @@ int main(){
         <<"1. LogIn"<<endl
         <<"2. Registrar Administradores"<<endl
         <<"3. funciones del usuario" <<endl
-        <<"4. LogOut "<<endl
-        <<"5. Salir "<<endl
+        <<"4. Cantidad de estrellas"<<endl
+        <<"5. LogOut "<<endl
+        <<"6. Salir "<<endl
         <<"- Ingrese opcion: ";
     cin>>opcion;
     cout<<endl;
@@ -76,6 +78,10 @@ int main(){
         funcionesUsuario(usuarioActivado,&usuarios);
         break;
       case 4:
+        cout<<"=| Cantidad de estrellas del restaurante |="<<endl
+            <<"estrellas: "<<estrellas(&usuarios)<<endl;
+        break;
+      case 5:
         usuarioActivado=LogOut(usuarioActivado);
         break;
       default:
@@ -192,12 +198,11 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
         }
         break;
         case 3:{
-          usuario* user =  empleadoMenorSueldo(usuarios);
-          cout<<" =| Empleado con menor sueldo |= "<<endl
-              <<"- Nombre: "<<user->getNombre()<<endl
-              <<"- Edad: "<<user->getEdad()<<endl;
-          user = NULL;
-          delete user;
+          cout<<" =| Empleados con menor sueldo |= "<<endl;
+          vector<personal*> users = empleadoMenorSueldo(usuarios);
+          for(int i=0; i<users.size(); i++){
+            cout<<i<<".- Nombre: "<<users.at(i)->getNombre()<<" | ID: "<<users.at(i)->getID()<<endl;
+          }
         }
         break;
         case 4:{
@@ -228,12 +233,11 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
         }
         break;
         case 5:{
-          usuario* user =  empleadoMayorSueldo(usuarios);
-          cout<<" =| Empleado con mayor sueldo |= "<<endl
-              <<"- Nombre: "<<user->getNombre()<<endl
-              <<"- Edad: "<<user->getEdad()<<endl;
-          user = NULL;
-          delete user;
+          cout<<" =| Empleados con mayor sueldo |= "<<endl;
+          vector<personal*> users = empleadoMenorSueldo(usuarios);
+          for(int i=0; i<users.size(); i++){
+            cout<<i<<".- Nombre: "<<users.at(i)->getNombre()<<" | ID: "<<users.at(i)->getID()<<endl;
+          }
         }
         break;
         case 6:{
@@ -348,7 +352,7 @@ void funcionesUsuario(usuario* user, vector<usuario*> *usuarios){
 
 //Funciones de funcionesUsuario
   /*Administrador*/
-usuario* contratarEmpleado(vector<usuario*> *usuarios){
+usuario*  contratarEmpleado(vector<usuario*> *usuarios){
   usuario* user;
   int opcion;
   string username, nombre, password, ID;
@@ -425,37 +429,41 @@ usuario* contratarEmpleado(vector<usuario*> *usuarios){
   cout<<"¡¡Usuario registrado!!"<<endl;
   return user;
 }
-usuario* empleadoMenorSueldo(vector<usuario*> *usuarios){
-  int cont;
-  int numero=10000;
-  personal* retornar;
-  personal* persona;
+vector<personal*> empleadoMenorSueldo(vector<usuario*> *usuarios){
+  vector<personal*> vectemp;
+  int sueldo=0;
   for(int i=0; i<usuarios->size(); i++){
     if(dynamic_cast<personal*>(usuarios->at(i))){
-      persona = dynamic_cast<personal*>(usuarios->at(i));
-      if(persona->getSueldo()<numero){
-        retornar = dynamic_cast<personal*>(usuarios->at(i));
-        numero = persona->getSueldo();
-      }
+      vectemp.push_back(dynamic_cast<personal*>(usuarios->at(i)));
     }
   }
-  return retornar;
+  if(vectemp.size()>0){
+    vector<personal*> retornar;
+    for(int i=1; i<vectemp.size(); i++){
+      if(vectemp.at(i)->getSueldo()<vectemp.at(sueldo)->getSueldo())
+        sueldo=i;
+    }
+    retornar.push_back(vectemp.at(sueldo));
+    return retornar;
+  }
 }
-usuario* empleadoMayorSueldo(vector<usuario*> *usuarios){
-  int cont;
-  int numero=0;
-  personal* retornar;
-  personal* persona;
+vector<personal*> empleadoMayorSueldo(vector<usuario*> *usuarios){
+  vector<personal*> vectemp;
+  int sueldo=0;
   for(int i=0; i<usuarios->size(); i++){
     if(dynamic_cast<personal*>(usuarios->at(i))){
-      persona = dynamic_cast<personal*>(usuarios->at(i));
-      if(persona->getSueldo()>numero){
-        retornar = dynamic_cast<personal*>(usuarios->at(i));
-        numero = persona->getSueldo();
-      }
+      vectemp.push_back(dynamic_cast<personal*>(usuarios->at(i)));
     }
   }
-  return retornar;
+  if(vectemp.size()>0){
+    vector<personal*> retornar;
+    for(int i=1; i<vectemp.size(); i++){
+      if(vectemp.at(i)->getSueldo()>vectemp.at(sueldo)->getSueldo())
+        sueldo=i;
+    }
+    retornar.push_back(vectemp.at(sueldo));
+    return retornar;
+  }
 }
 void asignarPlatillo(string platillo, string id, vector<usuario*> *usuarios){
   mesero* meserito;
@@ -551,6 +559,21 @@ void agradar(usuario* user, vector<usuario*> *usuarios){
 
 //Otras funciones
       /*Guarda el usuario en los archivos de texto*/
+int estrellas(vector<usuario*> *usuarios){
+  if(usuarios->size()>0){
+    int acum=0;
+    cliente* cl;
+    for(int i=0; i<usuarios->size(); i++){
+      if(dynamic_cast<cliente*>(usuarios->at(i))){
+        cl = dynamic_cast<cliente*>(usuarios->at(i));
+        acum+=cl->getRating();
+      }
+    }
+    return (acum/usuarios->size());
+  }
+  return 0;
+}
+
 void guardarUsuario(usuario* user){
   fstream fichero;
   fichero.open("datos.txt",std::fstream::in|std::fstream::out|std::fstream::app);
